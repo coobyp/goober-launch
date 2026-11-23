@@ -162,7 +162,7 @@ function GooberVisual.build(id: string, mutation: string?, showTag: boolean?): M
 
 		local nameLabel = Instance.new("TextLabel")
 		nameLabel.BackgroundTransparency = 1
-		nameLabel.Size = UDim2.new(1, 0, 0.55, 0)
+		nameLabel.Size = UDim2.fromScale(1, 0.55)
 		nameLabel.Font = Enum.Font.FredokaOne
 		nameLabel.TextScaled = true
 		nameLabel.TextColor3 = Config.RarityColors[def.Rarity] or Color3.new(1, 1, 1)
@@ -173,7 +173,7 @@ function GooberVisual.build(id: string, mutation: string?, showTag: boolean?): M
 		local rateLabel = Instance.new("TextLabel")
 		rateLabel.BackgroundTransparency = 1
 		rateLabel.Position = UDim2.fromScale(0, 0.55)
-		rateLabel.Size = UDim2.new(1, 0, 0.45, 0)
+		rateLabel.Size = UDim2.fromScale(1, 0.45)
 		rateLabel.Font = Enum.Font.FredokaOne
 		rateLabel.TextScaled = true
 		rateLabel.TextColor3 = Color3.fromRGB(120, 255, 120)

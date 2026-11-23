@@ -120,7 +120,7 @@ fill.Size = UDim2.fromScale(0, 1)
 fill.Parent = meter
 corner(fill, 10)
 local meterHint =
-	label(meter, "HOLD to charge, RELEASE in the yellow!", UDim2.new(1, 0, 0, 28), UDim2.new(0, 0, 0, -34))
+	label(meter, "HOLD to charge, RELEASE in the yellow!", UDim2.new(1, 0, 0, 28), UDim2.fromOffset(0, -34))
 
 -- Big distance readout during flight.
 local distanceLabel = label(gui, "", UDim2.fromOffset(500, 80), UDim2.new(0.5, -250, 0, 40))
