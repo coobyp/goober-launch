@@ -1,0 +1,13 @@
+# Wally installs these; the empty folders stay so `rojo build` works on a fresh clone.
+/Packages/*
+!/Packages/.gitkeep
+/ServerPackages/*
+!/ServerPackages/.gitkeep
+/DevPackages
+/build
+*.rbxl
+*.rbxlx
+*.lock
+!wally.lock
+sourcemap.json
+roblox.yml

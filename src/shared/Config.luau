@@ -1,0 +1,103 @@
+--!strict
+-- Every tunable number in the game lives here. Tune feel here first, code second.
+
+export type Zone = {
+	Name: string,
+	StartDistance: number, -- studs from the muzzle where this zone begins
+	GroundColor: Color3,
+	-- Rarity weights for crates that land in this zone. They don't need to sum to 100.
+	RarityWeights: { [string]: number },
+}
+
+export type Mutation = {
+	Name: string,
+	Chance: number, -- 0..1, rolled once per Goober
+	Multiplier: number, -- income multiplier
+	Scale: number?, -- visual size multiplier
+}
+
+local Config = {}
+
+Config.Cannon = {
+	PitchDegrees = 40, -- launch angle above the horizon
+	BaseSpeed = 110, -- studs/sec at Launch Power level 0 and a full charge
+	SpeedPerLevel = 14, -- studs/sec added per Launch Power level
+	MinChargeFactor = 0.35, -- a 0% charge still launches at 35% speed
+	SweetSpotMin = 0.88, -- charge window that earns the bonus
+	SweetSpotMax = 0.97,
+	SweetSpotBonus = 1.12, -- speed multiplier for hitting the window
+	MeterCycleSeconds = 1.1, -- time for the meter to go 0 -> 1 (it ping-pongs)
+	ChargeTimeoutSeconds = 20, -- sitting in the cannon too long cancels
+	SpinStrength = 6, -- random angular velocity for maximum flail
+}
+
+Config.Flight = {
+	MinFlightSeconds = 0.6, -- ignore "stopped" checks right after launch
+	RestSpeed = 4, -- studs/sec under which the ragdoll counts as resting
+	RestSeconds = 0.5, -- how long it has to rest to count as landed
+	MaxFlightSeconds = 15,
+	ResultHoldSeconds = 2.5, -- time spent lying on the ground before teleporting home
+	-- Server owns the physics, but cap the reported distance anyway:
+	-- range can't exceed the vacuum ballistic range times this, plus bounce slack.
+	RangeSlackMultiplier = 1.6,
+	RangeSlackStuds = 80,
+}
+
+Config.Upgrades = {
+	MaxLaunchLevel = 30,
+	BaseCost = 30,
+	CostGrowth = 1.38,
+}
+
+Config.Plot = {
+	Slots = 8,
+	SellSeconds = 20, -- a Goober sells for this many seconds of its income
+	OfflineCapSeconds = 2 * 60 * 60,
+	OfflineRate = 1, -- fraction of normal income earned while offline
+	MaxPlots = 6,
+}
+
+Config.RarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Legendary" }
+
+Config.RarityColors = {
+	Common = Color3.fromRGB(200, 200, 200),
+	Uncommon = Color3.fromRGB(90, 220, 110),
+	Rare = Color3.fromRGB(70, 150, 255),
+	Epic = Color3.fromRGB(190, 90, 255),
+	Legendary = Color3.fromRGB(255, 190, 40),
+}
+
+-- Ordered by distance. A landing belongs to the last zone whose StartDistance it passed.
+Config.Zones = {
+	{
+		Name = "Backyard",
+		StartDistance = 0,
+		GroundColor = Color3.fromRGB(96, 168, 76),
+		RarityWeights = { Common = 80, Uncommon = 18, Rare = 2, Epic = 0, Legendary = 0 },
+	},
+	{
+		Name = "Suburbs",
+		StartDistance = 180,
+		GroundColor = Color3.fromRGB(140, 150, 120),
+		RarityWeights = { Common = 50, Uncommon = 32, Rare = 13, Epic = 4.5, Legendary = 0.5 },
+	},
+	{
+		Name = "Mall",
+		StartDistance = 450,
+		GroundColor = Color3.fromRGB(205, 180, 130),
+		RarityWeights = { Common = 28, Uncommon = 35, Rare = 23, Epic = 11, Legendary = 3 },
+	},
+} :: { Zone }
+
+-- Rolled after the Goober itself. Checked rarest first; anything that misses all is "None".
+Config.Mutations = {
+	{ Name = "Crispy", Chance = 0.005, Multiplier = 10 },
+	{ Name = "Rainbow", Chance = 0.015, Multiplier = 5 },
+	{ Name = "Huge", Chance = 0.03, Multiplier = 3, Scale = 1.7 },
+	{ Name = "Gold", Chance = 0.05, Multiplier = 2 },
+} :: { Mutation }
+
+Config.FieldLength = 1600
+Config.FieldWidth = 600
+
+return Config
