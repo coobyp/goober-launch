@@ -25,9 +25,21 @@ local function block(name: string, size: Vector3, cframe: CFrame, color: Color3,
 end
 
 local function sign(text: string, color: Color3, cframe: CFrame, parent: Instance)
-	local post = block("SignPost", Vector3.new(1, 18, 1), cframe * CFrame.new(0, 9, 0), Color3.fromRGB(90, 60, 40), parent)
+	local post = block(
+		"SignPost",
+		Vector3.new(1, 18, 1),
+		cframe * CFrame.new(0, 9, 0),
+		Color3.fromRGB(90, 60, 40),
+		parent
+	)
 	post.Material = Enum.Material.Wood
-	local board = block("Sign", Vector3.new(40, 10, 1), cframe * CFrame.new(0, 20, 0), Color3.fromRGB(250, 245, 230), parent)
+	local board = block(
+		"Sign",
+		Vector3.new(40, 10, 1),
+		cframe * CFrame.new(0, 20, 0),
+		Color3.fromRGB(250, 245, 230),
+		parent
+	)
 	board.Material = Enum.Material.SmoothPlastic
 	for _, face in { Enum.NormalId.Front, Enum.NormalId.Back } do
 		local gui = Instance.new("SurfaceGui")
@@ -75,30 +87,59 @@ function MapBuilder.build(): Folder
 		ground:SetAttribute("ZoneIndex", i)
 		-- Signs on the left and right edges of each zone's start line.
 		for _, x in { -width / 2 + 30, width / 2 - 30 } do
-			sign(zone.Name .. "  " .. zone.StartDistance .. "+", Color3.fromRGB(40, 40, 40), CFrame.new(x, 0, startZ + 2), map)
+			sign(
+				zone.Name .. "  " .. zone.StartDistance .. "+",
+				Color3.fromRGB(40, 40, 40),
+				CFrame.new(x, 0, startZ + 2),
+				map
+			)
 		end
 		-- A thin painted line at the zone start.
-		local line = block("ZoneLine", Vector3.new(width, 0.2, 2), CFrame.new(0, 0.1, startZ + 1), Color3.new(1, 1, 1), map)
+		local line = block(
+			"ZoneLine",
+			Vector3.new(width, 0.2, 2),
+			CFrame.new(0, 0.1, startZ + 1),
+			Color3.new(1, 1, 1),
+			map
+		)
 		line.Material = Enum.Material.SmoothPlastic
 		line.CanCollide = false
 	end
 
 	-- Distance markers every 100 studs, so people can eyeball a launch.
 	for z = 100, length - 100, 100 do
-		local marker = block("Marker_" .. z, Vector3.new(4, 0.3, 4), CFrame.new(0, 0.15, z), Color3.fromRGB(255, 255, 255), map)
+		local marker = block(
+			"Marker_" .. z,
+			Vector3.new(4, 0.3, 4),
+			CFrame.new(0, 0.15, z),
+			Color3.fromRGB(255, 255, 255),
+			map
+		)
 		marker.Material = Enum.Material.Neon
 		marker.CanCollide = false
 	end
 
 	-- Base area for plots, behind the start line.
-	local base = block("PlotGround", Vector3.new(width, 4, 140), CFrame.new(0, -2, -70), Color3.fromRGB(120, 180, 90), map)
+	local base = block(
+		"PlotGround",
+		Vector3.new(width, 4, 140),
+		CFrame.new(0, -2, -70),
+		Color3.fromRGB(120, 180, 90),
+		map
+	)
 	base.Material = Enum.Material.Grass
 
 	-- Invisible walls so nobody tumbles off the edge of the world.
 	local wallHeight = 400
 	local walls = {
-		{ Vector3.new(4, wallHeight, length + 160), CFrame.new(-width / 2 - 2, wallHeight / 2, length / 2 - 80) },
-		{ Vector3.new(4, wallHeight, length + 160), CFrame.new(width / 2 + 2, wallHeight / 2, length / 2 - 80) },
+		{
+			Vector3.new(4, wallHeight, length + 160),
+			CFrame.new(-width / 2 - 2, wallHeight / 2, length / 2 - 80),
+		},
+		{
+			Vector3.new(4, wallHeight, length + 160),
+			CFrame.new(width / 2 + 2, wallHeight / 2, length / 2 - 80),
+		},
 		{ Vector3.new(width, wallHeight, 4), CFrame.new(0, wallHeight / 2, length + 2) },
 		{ Vector3.new(width, wallHeight, 4), CFrame.new(0, wallHeight / 2, -142) },
 	}

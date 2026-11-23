@@ -87,7 +87,10 @@ function Ragdoll.disable(character: Model)
 	character:SetAttribute("Ragdolled", nil)
 
 	for _, d in character:GetDescendants() do
-		if (d:IsA("BallSocketConstraint") and d.Name == SOCKET_NAME) or (d:IsA("Attachment") and d.Name == ATTACH_NAME) then
+		if
+			(d:IsA("BallSocketConstraint") and d.Name == SOCKET_NAME)
+			or (d:IsA("Attachment") and d.Name == ATTACH_NAME)
+		then
 			d:Destroy()
 		elseif d:IsA("Motor6D") then
 			d.Enabled = true

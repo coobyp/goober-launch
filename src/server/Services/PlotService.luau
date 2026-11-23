@@ -67,12 +67,19 @@ local function buildCannon(plot: Plot, origin: CFrame, parent: Instance)
 	cannon.Name = "Cannon"
 	cannon.Parent = parent
 
-	local base = makePart("Base", Vector3.new(8, 4, 8), CFrame.new(pivot - Vector3.new(0, 2, 0)), Color3.fromRGB(70, 70, 80), cannon)
+	local base = makePart(
+		"Base",
+		Vector3.new(8, 4, 8),
+		CFrame.new(pivot - Vector3.new(0, 2, 0)),
+		Color3.fromRGB(70, 70, 80),
+		cannon
+	)
 	base.Material = Enum.Material.Metal
 
 	local barrelCF = CFrame.lookAt(pivot + direction * (barrelLength / 2), pivot + direction * barrelLength)
 		* CFrame.Angles(0, math.rad(90), 0)
-	local barrel = makePart("Barrel", Vector3.new(barrelLength, 4, 4), barrelCF, Color3.fromRGB(230, 80, 60), cannon)
+	local barrel =
+		makePart("Barrel", Vector3.new(barrelLength, 4, 4), barrelCF, Color3.fromRGB(230, 80, 60), cannon)
 	barrel.Shape = Enum.PartType.Cylinder
 	barrel.Material = Enum.Material.Metal
 
@@ -101,21 +108,34 @@ local function buildPlot(index: number, x: number, parent: Instance): Plot
 	model.Name = "Plot" .. index
 	model.Parent = parent
 
-	local floor = makePart("Floor", PLOT_SIZE, origin * CFrame.new(0, 0.5, 0), Color3.fromRGB(230, 220, 190), model)
+	local floor =
+		makePart("Floor", PLOT_SIZE, origin * CFrame.new(0, 0.5, 0), Color3.fromRGB(230, 220, 190), model)
 	floor.Material = Enum.Material.WoodPlanks
 
 	local slots = {}
 	for _, z in SLOT_Z do
 		for _, sx in SLOT_X do
 			local cf = origin * CFrame.new(sx, 1, z)
-			local pedestal = makePart("Pedestal", Vector3.new(1, 8, 8), cf * CFrame.new(0, 0.5, 0) * CFrame.Angles(0, 0, math.rad(90)), Color3.fromRGB(255, 255, 255), model)
+			local pedestal = makePart(
+				"Pedestal",
+				Vector3.new(1, 8, 8),
+				cf * CFrame.new(0, 0.5, 0) * CFrame.Angles(0, 0, math.rad(90)),
+				Color3.fromRGB(255, 255, 255),
+				model
+			)
 			pedestal.Shape = Enum.PartType.Cylinder
 			table.insert(slots, cf * CFrame.new(0, 1, 0))
 		end
 	end
 
 	-- Owner nameplate at the back of the plot.
-	local board = makePart("OwnerSign", Vector3.new(30, 6, 1), origin * CFrame.new(0, 6, -PLOT_SIZE.Z / 2 + 1), Color3.fromRGB(255, 210, 80), model)
+	local board = makePart(
+		"OwnerSign",
+		Vector3.new(30, 6, 1),
+		origin * CFrame.new(0, 6, -PLOT_SIZE.Z / 2 + 1),
+		Color3.fromRGB(255, 210, 80),
+		model
+	)
 	local gui = Instance.new("SurfaceGui")
 	gui.Face = Enum.NormalId.Back
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
@@ -303,7 +323,13 @@ function PlotService.grantGoober(player: Player, id: string, mutation: string): 
 			if plot then
 				renderSlot(plot, entry)
 			end
-			outcome = { Placed = true, Slot = entry.Slot, SoldId = old.Id, SoldMutation = old.Mutation, SoldValue = value }
+			outcome = {
+				Placed = true,
+				Slot = entry.Slot,
+				SoldId = old.Id,
+				SoldMutation = old.Mutation,
+				SoldValue = value,
+			}
 		else
 			local value = Formulas.sellValue(id, mutation)
 			EconomyService.addCash(player, value)

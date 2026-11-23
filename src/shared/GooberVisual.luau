@@ -79,7 +79,12 @@ local function addAccessory(kind: string, body: Part, s: number, model: Model)
 		local leaf = ellipsoid("Leaf", Vector3.new(1.2, 0.15, 0.6) * s, Color3.fromRGB(70, 160, 60), model)
 		leaf.CFrame = body.CFrame * CFrame.new(0.2 * s, top, 0) * CFrame.Angles(0, 0, math.rad(-20))
 	elseif kind == "Cape" then
-		local cape = part("Cape", Vector3.new(body.Size.X * 0.9, body.Size.Y * 0.8, 0.1), Color3.fromRGB(170, 30, 40), model)
+		local cape = part(
+			"Cape",
+			Vector3.new(body.Size.X * 0.9, body.Size.Y * 0.8, 0.1),
+			Color3.fromRGB(170, 30, 40),
+			model
+		)
 		cape.CFrame = body.CFrame * CFrame.new(0, -0.1 * s, body.Size.Z / 2 + 0.05)
 	end
 end
@@ -116,8 +121,18 @@ function GooberVisual.build(id: string, mutation: string?, showTag: boolean?): M
 	local front = -def.Squish.Z * scale / 2
 	for _, side in { -1, 1 } do
 		local eye = ellipsoid("Eye", Vector3.new(eyeSize, eyeSize, eyeSize * 0.6), Color3.new(1, 1, 1), model)
-		eye.CFrame = body.CFrame * CFrame.new(side * def.Squish.X * scale * 0.2, def.Squish.Y * scale * 0.12, front + eyeSize * 0.15)
-		local pupil = ellipsoid("Pupil", Vector3.new(eyeSize, eyeSize, eyeSize * 0.6) * 0.45, Color3.new(0, 0, 0), model)
+		eye.CFrame = body.CFrame
+			* CFrame.new(
+				side * def.Squish.X * scale * 0.2,
+				def.Squish.Y * scale * 0.12,
+				front + eyeSize * 0.15
+			)
+		local pupil = ellipsoid(
+			"Pupil",
+			Vector3.new(eyeSize, eyeSize, eyeSize * 0.6) * 0.45,
+			Color3.new(0, 0, 0),
+			model
+		)
 		-- Slightly cross-eyed. It's a Goober.
 		pupil.CFrame = eye.CFrame * CFrame.new(-side * eyeSize * 0.12, 0, -eyeSize * 0.22)
 	end

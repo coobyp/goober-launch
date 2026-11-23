@@ -85,7 +85,11 @@ local function buyLaunchPower(player: Player)
 		return
 	end
 	if not EconomyService.trySpend(player, cost) then
-		notify:FireClient(player, "Need " .. Format.cash(cost - data.Cash) .. " more", Color3.fromRGB(255, 120, 120))
+		notify:FireClient(
+			player,
+			"Need " .. Format.cash(cost - data.Cash) .. " more",
+			Color3.fromRGB(255, 120, 120)
+		)
 		return
 	end
 	data.LaunchLevel += 1

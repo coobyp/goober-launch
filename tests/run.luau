@@ -109,16 +109,43 @@ end)
 test("pickWeighted respects boundaries and skips zero weights", function()
 	local order = { "A", "B", "C" }
 	local w = { A = 1, B = 0, C = 3 }
-	eq(Rolls.pickWeighted(w, order, function() return 0 end), "A")
-	eq(Rolls.pickWeighted(w, order, function() return 0.2499 end), "A")
-	eq(Rolls.pickWeighted(w, order, function() return 0.25 end), "C")
-	eq(Rolls.pickWeighted(w, order, function() return 0.9999999 end), "C")
-	eq(Rolls.pickWeighted({ A = 0 }, { "A" }, function() return 0.5 end), nil)
+	eq(
+		Rolls.pickWeighted(w, order, function()
+			return 0
+		end),
+		"A"
+	)
+	eq(
+		Rolls.pickWeighted(w, order, function()
+			return 0.2499
+		end),
+		"A"
+	)
+	eq(
+		Rolls.pickWeighted(w, order, function()
+			return 0.25
+		end),
+		"C"
+	)
+	eq(
+		Rolls.pickWeighted(w, order, function()
+			return 0.9999999
+		end),
+		"C"
+	)
+	eq(
+		Rolls.pickWeighted({ A = 0 }, { "A" }, function()
+			return 0.5
+		end),
+		nil
+	)
 end)
 
 test("Backyard can never drop Epic or Legendary", function()
 	for i = 0, 999 do
-		local r = Rolls.rollRarity(1, function() return i / 1000 end)
+		local r = Rolls.rollRarity(1, function()
+			return i / 1000
+		end)
 		assert(r ~= "Epic" and r ~= "Legendary", "got " .. r)
 	end
 end)
@@ -143,13 +170,48 @@ test("rarity distribution matches weights (Mall, 200k rolls)", function()
 end)
 
 test("mutation rolls hit each mutation at its chance", function()
-	eq(Rolls.rollMutation(function() return 0 end), "Crispy")
-	eq(Rolls.rollMutation(function() return 0.0049 end), "Crispy")
-	eq(Rolls.rollMutation(function() return 0.005 end), "Rainbow")
-	eq(Rolls.rollMutation(function() return 0.02 end), "Huge")
-	eq(Rolls.rollMutation(function() return 0.05 end), "Gold")
-	eq(Rolls.rollMutation(function() return 0.1 end), "None")
-	eq(Rolls.rollMutation(function() return 0.99 end), "None")
+	eq(
+		Rolls.rollMutation(function()
+			return 0
+		end),
+		"Crispy"
+	)
+	eq(
+		Rolls.rollMutation(function()
+			return 0.0049
+		end),
+		"Crispy"
+	)
+	eq(
+		Rolls.rollMutation(function()
+			return 0.005
+		end),
+		"Rainbow"
+	)
+	eq(
+		Rolls.rollMutation(function()
+			return 0.02
+		end),
+		"Huge"
+	)
+	eq(
+		Rolls.rollMutation(function()
+			return 0.05
+		end),
+		"Gold"
+	)
+	eq(
+		Rolls.rollMutation(function()
+			return 0.1
+		end),
+		"None"
+	)
+	eq(
+		Rolls.rollMutation(function()
+			return 0.99
+		end),
+		"None"
+	)
 end)
 
 test("rollGoober returns a valid Goober for every zone", function()
@@ -195,10 +257,13 @@ test("income applies mutation multipliers", function()
 	eq(Formulas.gooberIncome("sir_blobbington", "Gold"), 2)
 	eq(Formulas.gooberIncome("sir_blobbington", "Crispy"), 10)
 	eq(Formulas.gooberIncome("not_a_goober", "Gold"), 0)
-	eq(Formulas.totalIncome({
-		{ Id = "mega_jeff", Mutation = "None", Slot = 1 },
-		{ Id = "mega_jeff", Mutation = "Huge", Slot = 2 },
-	}), 24)
+	eq(
+		Formulas.totalIncome({
+			{ Id = "mega_jeff", Mutation = "None", Slot = 1 },
+			{ Id = "mega_jeff", Mutation = "Huge", Slot = 2 },
+		}),
+		24
+	)
 end)
 
 test("offline earnings cap at 2 hours", function()

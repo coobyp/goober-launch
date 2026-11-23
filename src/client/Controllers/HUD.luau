@@ -63,9 +63,16 @@ stats.BackgroundTransparency = 0.15
 stats.Parent = gui
 corner(stats)
 stroke(stats)
-local cashLabel = label(stats, "$0", UDim2.new(1, -16, 0, 40), UDim2.fromOffset(8, 4), Color3.fromRGB(120, 255, 120))
+local cashLabel =
+	label(stats, "$0", UDim2.new(1, -16, 0, 40), UDim2.fromOffset(8, 4), Color3.fromRGB(120, 255, 120))
 local incomeLabel = label(stats, "$0/s", UDim2.new(1, -16, 0, 24), UDim2.fromOffset(8, 44))
-local bestLabel = label(stats, "Best: 0 studs", UDim2.new(1, -16, 0, 22), UDim2.fromOffset(8, 70), Color3.fromRGB(255, 220, 120))
+local bestLabel = label(
+	stats,
+	"Best: 0 studs",
+	UDim2.new(1, -16, 0, 22),
+	UDim2.fromOffset(8, 70),
+	Color3.fromRGB(255, 220, 120)
+)
 
 -- Bottom-right upgrade button.
 local upgrade = Instance.new("TextButton")
@@ -80,7 +87,8 @@ upgrade.Parent = gui
 corner(upgrade)
 stroke(upgrade)
 local upgradeTitle = label(upgrade, "Launch Power Lv 0", UDim2.new(1, -16, 0.55, 0), UDim2.fromOffset(8, 2))
-local upgradeCost = label(upgrade, "$30", UDim2.new(1, -16, 0.4, 0), UDim2.new(0, 8, 0.55, 0), Color3.fromRGB(255, 255, 180))
+local upgradeCost =
+	label(upgrade, "$30", UDim2.new(1, -16, 0.4, 0), UDim2.new(0, 8, 0.55, 0), Color3.fromRGB(255, 255, 180))
 upgrade.Activated:Connect(function()
 	Remotes.get("BuyLaunchPower"):FireServer()
 end)
@@ -111,7 +119,8 @@ fill.BorderSizePixel = 0
 fill.Size = UDim2.fromScale(0, 1)
 fill.Parent = meter
 corner(fill, 10)
-local meterHint = label(meter, "HOLD to charge, RELEASE in the yellow!", UDim2.new(1, 0, 0, 28), UDim2.new(0, 0, 0, -34))
+local meterHint =
+	label(meter, "HOLD to charge, RELEASE in the yellow!", UDim2.new(1, 0, 0, 28), UDim2.new(0, 0, 0, -34))
 
 -- Big distance readout during flight.
 local distanceLabel = label(gui, "", UDim2.fromOffset(500, 80), UDim2.new(0.5, -250, 0, 40))
@@ -128,11 +137,14 @@ card.BackgroundColor3 = Color3.fromRGB(60, 40, 90)
 card.Parent = gui
 corner(card, 16)
 stroke(card, 4)
-local cardDistance = label(card, "", UDim2.new(1, -20, 0, 50), UDim2.fromOffset(10, 8), Color3.fromRGB(255, 220, 120))
+local cardDistance =
+	label(card, "", UDim2.new(1, -20, 0, 50), UDim2.fromOffset(10, 8), Color3.fromRGB(255, 220, 120))
 local cardZone = label(card, "", UDim2.new(1, -20, 0, 26), UDim2.fromOffset(10, 58))
 local cardGoober = label(card, "", UDim2.new(1, -20, 0, 44), UDim2.fromOffset(10, 88))
-local cardDetail = label(card, "", UDim2.new(1, -20, 0, 26), UDim2.fromOffset(10, 136), Color3.fromRGB(200, 255, 200))
-local cardNote = label(card, "", UDim2.new(1, -20, 0, 22), UDim2.fromOffset(10, 168), Color3.fromRGB(220, 220, 220))
+local cardDetail =
+	label(card, "", UDim2.new(1, -20, 0, 26), UDim2.fromOffset(10, 136), Color3.fromRGB(200, 255, 200))
+local cardNote =
+	label(card, "", UDim2.new(1, -20, 0, 22), UDim2.fromOffset(10, 168), Color3.fromRGB(220, 220, 220))
 
 -- Toasts.
 local toasts = Instance.new("Frame")
@@ -159,7 +171,11 @@ function HUD.notify(text: string, color: Color3?)
 	toast.Parent = toasts
 	corner(toast, 8)
 	task.delay(3.5, function()
-		local tween = TweenService:Create(toast, TweenInfo.new(0.4), { BackgroundTransparency = 1, TextTransparency = 1 })
+		local tween = TweenService:Create(
+			toast,
+			TweenInfo.new(0.4),
+			{ BackgroundTransparency = 1, TextTransparency = 1 }
+		)
 		tween:Play()
 		tween.Completed:Wait()
 		toast:Destroy()
@@ -201,7 +217,9 @@ function HUD.showResult(result: LaunchResult)
 	cardToken += 1
 	local token = cardToken
 	cardDistance.Text = Format.studs(result.Distance) .. (if result.NewBest then "  NEW BEST!" else "")
-	cardZone.Text = "Landed in the " .. result.ZoneName .. (if result.SweetSpot then "  (perfect launch!)" else "")
+	cardZone.Text = "Landed in the "
+		.. result.ZoneName
+		.. (if result.SweetSpot then "  (perfect launch!)" else "")
 	cardGoober.Text = (if result.Mutation ~= "None" then result.Mutation .. " " else "") .. result.GooberName
 	cardGoober.TextColor3 = Config.RarityColors[result.Rarity] or WHITE
 	cardDetail.Text = result.Rarity .. "  •  " .. Format.rate(result.Income)
@@ -214,7 +232,9 @@ function HUD.showResult(result: LaunchResult)
 	end
 	card.Visible = true
 	card.Size = UDim2.fromOffset(220, 100)
-	TweenService:Create(card, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Size = UDim2.fromOffset(440, 200) }):Play()
+	TweenService
+		:Create(card, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Size = UDim2.fromOffset(440, 200) })
+		:Play()
 	task.delay(3.5, function()
 		if cardToken == token then
 			card.Visible = false
@@ -234,7 +254,9 @@ local function refresh()
 	upgradeTitle.Text = "Launch Power Lv " .. level
 	if cost then
 		upgradeCost.Text = Format.cash(cost)
-		upgrade.BackgroundColor3 = if cash >= cost then Color3.fromRGB(80, 200, 90) else Color3.fromRGB(255, 140, 40)
+		upgrade.BackgroundColor3 = if cash >= cost
+			then Color3.fromRGB(80, 200, 90)
+			else Color3.fromRGB(255, 140, 40)
 	else
 		upgradeCost.Text = "MAXED"
 		upgrade.BackgroundColor3 = Color3.fromRGB(150, 150, 150)

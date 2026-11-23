@@ -161,7 +161,13 @@ local function crateReveal(at: Vector3, gooberId: string, mutation: string, igno
 	end)
 end
 
-local function finishFlight(player: Player, token: number, plot: PlotService.Plot, speed: number, sweetSpot: boolean)
+local function finishFlight(
+	player: Player,
+	token: number,
+	plot: PlotService.Plot,
+	speed: number,
+	sweetSpot: boolean
+)
 	local state = getState(player)
 	if state.Token ~= token then
 		return
@@ -202,7 +208,9 @@ local function finishFlight(player: Player, token: number, plot: PlotService.Plo
 		NewBest = newBest,
 		SweetSpot = sweetSpot,
 		Placed = outcome.Placed,
-		SoldName = if outcome.SoldId and GooberDefs.ById[outcome.SoldId] then GooberDefs.ById[outcome.SoldId].Name else nil,
+		SoldName = if outcome.SoldId and GooberDefs.ById[outcome.SoldId]
+			then GooberDefs.ById[outcome.SoldId].Name
+			else nil,
 		SoldValue = outcome.SoldValue,
 	})
 
@@ -215,7 +223,13 @@ local function finishFlight(player: Player, token: number, plot: PlotService.Plo
 	end)
 end
 
-local function watchFlight(player: Player, token: number, plot: PlotService.Plot, speed: number, sweetSpot: boolean)
+local function watchFlight(
+	player: Player,
+	token: number,
+	plot: PlotService.Plot,
+	speed: number,
+	sweetSpot: boolean
+)
 	local state = getState(player)
 	local started = os.clock()
 	local restingFor = 0
@@ -238,7 +252,11 @@ local function watchFlight(player: Player, token: number, plot: PlotService.Plot
 				restingFor = 0
 			end
 		end
-		if restingFor >= Config.Flight.RestSeconds or elapsed > Config.Flight.MaxFlightSeconds or root.Position.Y < -40 then
+		if
+			restingFor >= Config.Flight.RestSeconds
+			or elapsed > Config.Flight.MaxFlightSeconds
+			or root.Position.Y < -40
+		then
 			finishFlight(player, token, plot, speed, sweetSpot)
 			return
 		end
@@ -284,7 +302,8 @@ local function onLaunch(player: Player, charge: unknown)
 	end
 	local torso = character:FindFirstChild("UpperTorso") :: BasePart?
 	if torso then
-		torso.AssemblyAngularVelocity = Vector3.new(rng:NextNumber(-spin, spin), rng:NextNumber(-spin, spin), rng:NextNumber(-spin, spin))
+		torso.AssemblyAngularVelocity =
+			Vector3.new(rng:NextNumber(-spin, spin), rng:NextNumber(-spin, spin), rng:NextNumber(-spin, spin))
 	end
 
 	remotes.Launched:FireClient(player, plot.Muzzle.Position, speed, sweetSpot)
