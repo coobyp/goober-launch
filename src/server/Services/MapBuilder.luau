@@ -41,6 +41,9 @@ local function sign(text: string, color: Color3, cframe: CFrame, parent: Instanc
 		parent
 	)
 	board.Material = Enum.Material.SmoothPlastic
+	-- The outer plots fire straight through these, so they must not stop a flight.
+	post.CanCollide = false
+	board.CanCollide = false
 	for _, face in { Enum.NormalId.Front, Enum.NormalId.Back } do
 		local gui = Instance.new("SurfaceGui")
 		gui.Face = face
