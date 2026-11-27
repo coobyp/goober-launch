@@ -77,12 +77,31 @@ end
 
 export type OwnedGoober = { Id: string, Mutation: string, Slot: number }
 
-function Formulas.totalIncome(goobers: { OwnedGoober }): number
+-- Income multiplier from rebirths. 0 rebirths = x1.
+function Formulas.rebirthMultiplier(rebirths: number): number
+	return 1 + Config.Rebirth.IncomeBonus * math.max(rebirths, 0)
+end
+
+-- Cash cost of the next rebirth when you have `rebirths` already. nil when maxed.
+function Formulas.rebirthCost(rebirths: number): number?
+	if rebirths >= Config.Rebirth.Max then
+		return nil
+	end
+	return math.floor(Config.Rebirth.BaseCost * Config.Rebirth.CostGrowth ^ math.max(rebirths, 0))
+end
+
+function Formulas.canRebirth(rebirths: number, launchLevel: number, cash: number): boolean
+	local cost = Formulas.rebirthCost(rebirths)
+	return cost ~= nil and launchLevel >= Config.Rebirth.LevelRequired and cash >= cost
+end
+
+-- Cash per second for a whole plot, including the rebirth multiplier.
+function Formulas.totalIncome(goobers: { OwnedGoober }, rebirths: number?): number
 	local total = 0
 	for _, g in goobers do
 		total += Formulas.gooberIncome(g.Id, g.Mutation)
 	end
-	return total
+	return total * Formulas.rebirthMultiplier(rebirths or 0)
 end
 
 function Formulas.offlineEarnings(incomePerSecond: number, secondsAway: number): (number, number)

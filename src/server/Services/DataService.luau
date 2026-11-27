@@ -14,6 +14,7 @@ export type PlayerData = {
 	LaunchLevel: number,
 	BestDistance: number,
 	TotalLaunches: number,
+	Rebirths: number,
 	Goobers: { OwnedGoober },
 	Discovered: { [string]: boolean }, -- Goober ids ever owned; feeds the Index in week 2
 	LastOnline: number, -- os.time() of the last economy tick, for offline earnings
@@ -24,6 +25,7 @@ local TEMPLATE: PlayerData = {
 	LaunchLevel = 0,
 	BestDistance = 0,
 	TotalLaunches = 0,
+	Rebirths = 0,
 	Goobers = {},
 	Discovered = {},
 	LastOnline = 0,

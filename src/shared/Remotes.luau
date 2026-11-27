@@ -13,6 +13,7 @@ local NAMES = {
 	"LaunchResult", -- server -> client: landed. (result table)
 	"ChargeCancelled", -- server -> client: charge timed out or was refused.
 	"BuyLaunchPower", -- client -> server: buy one Launch Power level.
+	"Rebirth", -- client -> server: rebirth now (server checks it's allowed).
 	"Notify", -- server -> client: toast message. (text, color?)
 }
 

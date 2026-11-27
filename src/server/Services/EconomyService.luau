@@ -17,6 +17,7 @@ local EconomyService = {}
 
 local notify = Remotes.get("Notify")
 local lastPurchase: { [Player]: number } = {}
+local rebirthGate: ((Player) -> boolean)? = nil
 
 local function leaderstat(player: Player, name: string): IntValue
 	local folder = player:FindFirstChild("leaderstats")
@@ -39,15 +40,18 @@ function EconomyService.refresh(player: Player)
 	if not data then
 		return
 	end
-	local income = Formulas.totalIncome(data.Goobers)
+	local income = Formulas.totalIncome(data.Goobers, data.Rebirths)
 	player:SetAttribute("Cash", data.Cash)
 	player:SetAttribute("Income", income)
 	player:SetAttribute("LaunchLevel", data.LaunchLevel)
 	player:SetAttribute("UpgradeCost", Formulas.upgradeCost(data.LaunchLevel))
 	player:SetAttribute("BestDistance", data.BestDistance)
 	player:SetAttribute("LaunchSpeed", Formulas.baseLaunchSpeed(data.LaunchLevel))
+	player:SetAttribute("Rebirths", data.Rebirths)
+	player:SetAttribute("RebirthCost", Formulas.rebirthCost(data.Rebirths))
 	leaderstat(player, "Cash").Value = math.floor(math.min(data.Cash, 2 ^ 53))
 	leaderstat(player, "Best").Value = math.floor(data.BestDistance)
+	leaderstat(player, "Rebirths").Value = data.Rebirths
 end
 
 function EconomyService.addCash(player: Player, amount: number)
@@ -96,10 +100,50 @@ local function buyLaunchPower(player: Player)
 	EconomyService.refresh(player)
 end
 
+-- Resets cash and Launch Power for a permanent income multiplier. Goobers stay.
+local function rebirth(player: Player)
+	local now = os.clock()
+	if (lastPurchase[player] or 0) > now - 0.5 then
+		return
+	end
+	lastPurchase[player] = now
+
+	local data = DataService.get(player)
+	if not data then
+		return
+	end
+	if not Formulas.canRebirth(data.Rebirths, data.LaunchLevel, data.Cash) then
+		notify:FireClient(player, "Not ready to rebirth yet.", Color3.fromRGB(255, 120, 120))
+		return
+	end
+	if rebirthGate and not rebirthGate(player) then
+		notify:FireClient(player, "Land first, then rebirth!", Color3.fromRGB(255, 120, 120))
+		return
+	end
+	data.Rebirths += 1
+	data.Cash = 0
+	data.LaunchLevel = 0
+	EconomyService.refresh(player)
+	notify:FireClient(
+		player,
+		"REBIRTH "
+			.. data.Rebirths
+			.. "! Your Goobers now earn x"
+			.. Formulas.rebirthMultiplier(data.Rebirths)
+			.. " forever.",
+		Color3.fromRGB(255, 120, 255)
+	)
+end
+
+-- LaunchService registers this so you can't rebirth mid-flight.
+function EconomyService.setRebirthGate(gate: (Player) -> boolean)
+	rebirthGate = gate
+end
+
 local function onLoaded(player: Player, data: DataService.PlayerData)
 	local now = os.time()
 	if data.LastOnline > 0 then
-		local income = Formulas.totalIncome(data.Goobers)
+		local income = Formulas.totalIncome(data.Goobers, data.Rebirths)
 		local earned, credited = Formulas.offlineEarnings(income, now - data.LastOnline)
 		if earned > 0 then
 			data.Cash += earned
@@ -131,6 +175,7 @@ function EconomyService.start()
 		lastPurchase[player] = nil
 	end)
 	Remotes.get("BuyLaunchPower").OnServerEvent:Connect(buyLaunchPower)
+	Remotes.get("Rebirth").OnServerEvent:Connect(rebirth)
 
 	-- Income tick. Uses real elapsed time so a slow server doesn't shortchange anyone.
 	task.spawn(function()
@@ -144,7 +189,7 @@ function EconomyService.start()
 			for _, player in Players:GetPlayers() do
 				local data = DataService.get(player)
 				if data then
-					local income = Formulas.totalIncome(data.Goobers)
+					local income = Formulas.totalIncome(data.Goobers, data.Rebirths)
 					if income > 0 then
 						data.Cash += income * dt
 					end

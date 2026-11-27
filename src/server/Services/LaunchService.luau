@@ -347,6 +347,9 @@ end
 
 function LaunchService.start()
 	PlotService.setCannonHandler(onCannon)
+	EconomyService.setRebirthGate(function(player)
+		return getState(player).Phase == "Idle"
+	end)
 	remotes.Launch.OnServerEvent:Connect(onLaunch)
 
 	local function hook(player: Player)

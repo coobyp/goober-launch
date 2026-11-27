@@ -52,6 +52,16 @@ Config.Upgrades = {
 	CostGrowth = 1.38,
 }
 
+-- Rebirth: reset cash and Launch Power for a permanent income multiplier.
+-- Goobers and best distance are kept, so a rebirth never leaves you with an empty plot.
+Config.Rebirth = {
+	LevelRequired = 15, -- Launch Power needed before you can rebirth
+	BaseCost = 50000, -- cash cost of the first rebirth
+	CostGrowth = 4, -- each rebirth costs this many times the last
+	IncomeBonus = 0.5, -- +50% income per rebirth (1 rebirth = x1.5, 2 = x2, ...)
+	Max = 50,
+}
+
 Config.Plot = {
 	Slots = 8,
 	SellSeconds = 20, -- a Goober sells for this many seconds of its income

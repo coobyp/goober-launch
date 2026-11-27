@@ -9,6 +9,7 @@ local TweenService = game:GetService("TweenService")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
 local Format = require(Shared.Format)
+local Formulas = require(Shared.Formulas)
 local Remotes = require(Shared.Remotes)
 
 local player = Players.LocalPlayer
@@ -91,6 +92,58 @@ local upgradeCost =
 	label(upgrade, "$30", UDim2.new(1, -16, 0.4, 0), UDim2.new(0, 8, 0.55, 0), Color3.fromRGB(255, 255, 180))
 upgrade.Activated:Connect(function()
 	Remotes.get("BuyLaunchPower"):FireServer()
+end)
+
+-- Rebirth button, stacked above the upgrade. Tap twice to confirm, since it resets
+-- cash and Launch Power.
+local rebirthButton = Instance.new("TextButton")
+rebirthButton.Name = "Rebirth"
+rebirthButton.Size = UDim2.fromOffset(230, 60)
+rebirthButton.AnchorPoint = Vector2.new(1, 1)
+rebirthButton.Position = UDim2.new(1, -12, 1, -90)
+rebirthButton.BackgroundColor3 = Color3.fromRGB(120, 120, 130)
+rebirthButton.AutoButtonColor = true
+rebirthButton.Text = ""
+rebirthButton.Parent = gui
+corner(rebirthButton)
+stroke(rebirthButton)
+local rebirthTitle = label(rebirthButton, "Rebirth", UDim2.new(1, -16, 0.5, 0), UDim2.fromOffset(8, 3))
+local rebirthDetail = label(
+	rebirthButton,
+	"",
+	UDim2.new(1, -16, 0.38, 0),
+	UDim2.new(0, 8, 0.55, 0),
+	Color3.fromRGB(255, 220, 255)
+)
+local rebirthArmedUntil = 0
+local refresh: () -> ()
+
+rebirthButton.Activated:Connect(function()
+	local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+	local level = (player:GetAttribute("LaunchLevel") :: number?) or 0
+	local cash = (player:GetAttribute("Cash") :: number?) or 0
+	if not Formulas.canRebirth(rebirths, level, cash) then
+		HUD.notify(
+			"Rebirth needs Launch Power "
+				.. Config.Rebirth.LevelRequired
+				.. " and "
+				.. Format.cash(Formulas.rebirthCost(rebirths) or 0),
+			Color3.fromRGB(255, 180, 255)
+		)
+		return
+	end
+	if os.clock() < rebirthArmedUntil then
+		rebirthArmedUntil = 0
+		Remotes.get("Rebirth"):FireServer()
+	else
+		rebirthArmedUntil = os.clock() + 3
+		HUD.notify(
+			"Resets cash and Launch Power. Goobers stay. Tap again to rebirth!",
+			Color3.fromRGB(255, 180, 255)
+		)
+		task.delay(3, refresh)
+	end
+	refresh()
 end)
 
 -- Charge meter (hidden until you're in the cannon).
@@ -242,7 +295,7 @@ function HUD.showResult(result: LaunchResult)
 	end)
 end
 
-local function refresh()
+function refresh()
 	local cash = (player:GetAttribute("Cash") :: number?) or 0
 	local income = (player:GetAttribute("Income") :: number?) or 0
 	local level = (player:GetAttribute("LaunchLevel") :: number?) or 0
@@ -261,10 +314,35 @@ local function refresh()
 		upgradeCost.Text = "MAXED"
 		upgrade.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
 	end
+
+	local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+	local rebirthCost = Formulas.rebirthCost(rebirths)
+	local nextMultiplier = Formulas.rebirthMultiplier(rebirths + 1)
+	if rebirthCost == nil then
+		rebirthTitle.Text = "Rebirth " .. rebirths .. " (max)"
+		rebirthDetail.Text = "x" .. Formulas.rebirthMultiplier(rebirths) .. " income"
+		rebirthButton.BackgroundColor3 = Color3.fromRGB(120, 120, 130)
+	elseif os.clock() < rebirthArmedUntil then
+		rebirthTitle.Text = "Tap again!"
+		rebirthDetail.Text = "Rebirth for x" .. nextMultiplier .. " income"
+		rebirthButton.BackgroundColor3 = Color3.fromRGB(255, 80, 200)
+	else
+		rebirthTitle.Text = if rebirths > 0
+			then "Rebirth (x" .. Formulas.rebirthMultiplier(rebirths) .. " now)"
+			else "Rebirth"
+		if level < Config.Rebirth.LevelRequired then
+			rebirthDetail.Text = "Needs Launch Power " .. Config.Rebirth.LevelRequired
+		else
+			rebirthDetail.Text = Format.cash(rebirthCost) .. " for x" .. nextMultiplier .. " income"
+		end
+		rebirthButton.BackgroundColor3 = if Formulas.canRebirth(rebirths, level, cash)
+			then Color3.fromRGB(190, 70, 230)
+			else Color3.fromRGB(120, 120, 130)
+	end
 end
 
 function HUD.start()
-	for _, name in { "Cash", "Income", "LaunchLevel", "UpgradeCost", "BestDistance" } do
+	for _, name in { "Cash", "Income", "LaunchLevel", "UpgradeCost", "BestDistance", "Rebirths" } do
 		player:GetAttributeChangedSignal(name):Connect(refresh)
 	end
 	refresh()

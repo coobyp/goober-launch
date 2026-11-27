@@ -279,6 +279,22 @@ test("income applies mutation multipliers", function()
 	)
 end)
 
+test("rebirth: cost grows, multiplier stacks, gated by level and cash", function()
+	eq(Formulas.rebirthMultiplier(0), 1)
+	eq(Formulas.rebirthMultiplier(2), 1 + 2 * Config.Rebirth.IncomeBonus)
+	local first = Formulas.rebirthCost(0)
+	eq(first, Config.Rebirth.BaseCost)
+	assert(Formulas.rebirthCost(1) > first, "cost should grow")
+	eq(Formulas.rebirthCost(Config.Rebirth.Max), nil, "maxed")
+	local lvl = Config.Rebirth.LevelRequired
+	eq(Formulas.canRebirth(0, lvl, first), true)
+	eq(Formulas.canRebirth(0, lvl - 1, first * 10), false, "level gate")
+	eq(Formulas.canRebirth(0, lvl, first - 1), false, "cash gate")
+	local plot = { { Id = "sir_blobbington", Mutation = "None", Slot = 1 } }
+	eq(Formulas.totalIncome(plot, 2), 1 * Formulas.rebirthMultiplier(2))
+	eq(Formulas.totalIncome(plot), 1, "no rebirths by default")
+end)
+
 test("offline earnings cap at 2 hours", function()
 	local earned, credited = Formulas.offlineEarnings(10, 60)
 	eq(earned, 600)
