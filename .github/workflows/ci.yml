@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Format
+        run: stylua --check src tests
+
+      - name: Lint
+        run: selene src
+
+      - name: Unit tests
+        run: lune run tests/run
+
+      - name: Install packages
+        run: wally install
+
+      - name: Build place
+        run: rojo build -o goober-launch.rbxl
