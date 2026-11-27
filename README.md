@@ -2,7 +2,7 @@
 
 Cannon your own ragdoll across the map. Whatever crate you land on cracks open into a Goober, an original meme critter that earns cash on your plot. Spend cash on Launch Power, fly farther, land in rarer zones, catch rarer Goobers.
 
-The core loop is playable end to end, with all six zones, rebirth and the Goober Index. Game passes and stealing are in progress (week two).
+The core loop is playable end to end, with all six zones, rebirth, the Goober Index and a Robux shop (switched on after publishing). Stealing is next.
 
 ## Play it in Studio (on 9100)
 
@@ -27,6 +27,18 @@ The map, plots, cannons and Goobers are all built from code, so there's nothing 
 - **Places > Max players: 6.** There are 6 plots.
 - **Security > Enable Studio Access to API Services** if you want saves to persist in Studio. Without it, ProfileStore uses an in-memory mock and nothing saves (fine for playtests).
 
+**Turning on the shop** (after the first publish). Every Robux item is in `Config.Monetization` with `Id = 0`, which shows as "Coming soon" and can't be bought. For each one, create it in the Creator Dashboard (Monetization > Passes or Developer Products), set the price, paste its id into `Config.Monetization`, and republish:
+
+| Item | Type | What it does | Suggested price |
+|---|---|---|---|
+| 2x Cash | Game pass | Double income forever | R$ 199 |
+| Lucky Launcher | Game pass | 1.5x luck on every crate | R$ 249 |
+| Super Cannon | Game pass | +15% launch speed | R$ 149 |
+| Cash Pack | Developer product | 10 minutes of income (at least $1K) | R$ 49 |
+| Luck Boost | Developer product | 2x luck for 15 minutes | R$ 39 |
+
+Nothing sold is random, so no odds disclosure is needed for paid items. Receipts are deduplicated in the player's save.
+
 ## How to play
 
 1. Walk up to the cannon in front of your plot and press **E** (or tap the prompt).
@@ -50,6 +62,8 @@ src/
       Ragdoll               R15 Motor6D <-> BallSocketConstraint swap
       EconomyService        cash/sec, offline earnings, Launch Power purchases
       DataService           ProfileStore saves
+      MonetizationService   game passes, developer products, receipts
+      DevCommands           Studio-only test hooks
   client/
     init.client.luau
     Controllers/
@@ -57,6 +71,7 @@ src/
       CannonController      hold-to-charge input, cannon camera, live distance
       RainbowController     color cycling for Rainbow Goobers
       IndexController       the Goober Index panel
+      ShopController        the Robux shop
   shared/
     Config                  every tunable number
     GooberDefs              the 14 Goobers

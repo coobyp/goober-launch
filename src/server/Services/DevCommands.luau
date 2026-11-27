@@ -6,6 +6,7 @@
 --   game.ServerStorage.DevCommands:Invoke("cash", 1e6)
 --   game.ServerStorage.DevCommands:Invoke("level", 20)
 --   game.ServerStorage.DevCommands:Invoke("launch", 0.92) -- 0.92 = perfect
+--   game.ServerStorage.DevCommands:Invoke("pass", "DoubleCash") -- "-DoubleCash" removes it
 --   game.ServerStorage.DevCommands:Invoke("state")
 -- Commands act on the first player in the server.
 
@@ -19,6 +20,7 @@ local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Co
 local DataService = require(script.Parent.DataService)
 local EconomyService = require(script.Parent.EconomyService)
 local LaunchService = require(script.Parent.LaunchService)
+local MonetizationService = require(script.Parent.MonetizationService)
 
 local DevCommands = {}
 
@@ -37,6 +39,13 @@ local handlers: { [string]: (Player, DataService.PlayerData, any) -> any } = {
 	launch = function(player, _, charge)
 		task.spawn(LaunchService.devLaunch, player, tonumber(charge) or 0.92)
 		return "launched"
+	end,
+	-- Pretend to own (or not own) a pass: pass = "DoubleCash" | "Lucky" | "SuperCannon".
+	pass = function(player, _, key)
+		local on = string.sub(key, 1, 1) ~= "-"
+		local name = if on then key else string.sub(key, 2)
+		MonetizationService.setOwned(player, name, on)
+		return name .. (if on then " on" else " off")
 	end,
 	state = function(_, data)
 		local goobers = {}

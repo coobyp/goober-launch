@@ -18,6 +18,7 @@ local Rolls = require(Shared.Rolls)
 
 local DataService = require(script.Parent.DataService)
 local EconomyService = require(script.Parent.EconomyService)
+local MonetizationService = require(script.Parent.MonetizationService)
 local PlotService = require(script.Parent.PlotService)
 local Ragdoll = require(script.Parent.Ragdoll)
 
@@ -184,7 +185,7 @@ local function finishFlight(
 	local distance = Vector3.new(delta.X, 0, delta.Z).Magnitude
 	distance = math.min(distance, Formulas.maxPlausibleDistance(speed))
 
-	local result = Rolls.rollGoober(distance, roll)
+	local result = Rolls.rollGoober(distance, roll, MonetizationService.luck(player))
 	data.TotalLaunches += 1
 	local newBest = distance > data.BestDistance
 	if newBest then
@@ -311,7 +312,7 @@ local function onLaunch(player: Player, charge: unknown)
 	state.Token += 1
 	local token = state.Token
 
-	local speed = Formulas.launchSpeed(data.LaunchLevel, c)
+	local speed = Formulas.launchSpeed(data.LaunchLevel, c, MonetizationService.launchMultiplier(player))
 	local sweetSpot = Formulas.isSweetSpot(c)
 	local velocity = plot.Muzzle.LookVector * speed
 

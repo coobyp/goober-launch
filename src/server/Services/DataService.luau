@@ -18,6 +18,8 @@ export type PlayerData = {
 	Goobers: { OwnedGoober },
 	Discovered: { [string]: boolean }, -- Goober ids ever owned; feeds the Index in week 2
 	LastOnline: number, -- os.time() of the last economy tick, for offline earnings
+	LuckBoostUntil: number, -- os.time() when a bought Luck Boost runs out
+	Receipts: { string }, -- recent developer-product PurchaseIds, so none is granted twice
 }
 
 local TEMPLATE: PlayerData = {
@@ -29,6 +31,8 @@ local TEMPLATE: PlayerData = {
 	Goobers = {},
 	Discovered = {},
 	LastOnline = 0,
+	LuckBoostUntil = 0,
+	Receipts = {},
 }
 
 -- Bump the store name only for a deliberate wipe. Schema additions go in TEMPLATE;

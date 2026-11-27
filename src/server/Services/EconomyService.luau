@@ -18,6 +18,19 @@ local EconomyService = {}
 local notify = Remotes.get("Notify")
 local lastPurchase: { [Player]: number } = {}
 local rebirthGate: ((Player) -> boolean)? = nil
+local extraMultiplier: ((Player) -> number)? = nil
+
+-- Total cash per second for a player, with every multiplier applied.
+function EconomyService.income(player: Player, data: DataService.PlayerData): number
+	local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
+	return income * (if extraMultiplier then extraMultiplier(player) else 1)
+end
+
+-- MonetizationService registers its pass multiplier here (it requires this module,
+-- so it can't be required back).
+function EconomyService.setExtraMultiplier(fn: (Player) -> number)
+	extraMultiplier = fn
+end
 
 local function leaderstat(player: Player, name: string): IntValue
 	local folder = player:FindFirstChild("leaderstats")
@@ -40,7 +53,7 @@ function EconomyService.refresh(player: Player)
 	if not data then
 		return
 	end
-	local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
+	local income = EconomyService.income(player, data)
 	player:SetAttribute("Cash", data.Cash)
 	player:SetAttribute("Income", income)
 	player:SetAttribute("LaunchLevel", data.LaunchLevel)
@@ -151,7 +164,7 @@ end
 local function onLoaded(player: Player, data: DataService.PlayerData)
 	local now = os.time()
 	if data.LastOnline > 0 then
-		local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
+		local income = EconomyService.income(player, data)
 		local earned, credited = Formulas.offlineEarnings(income, now - data.LastOnline)
 		if earned > 0 then
 			data.Cash += earned
@@ -197,7 +210,7 @@ function EconomyService.start()
 			for _, player in Players:GetPlayers() do
 				local data = DataService.get(player)
 				if data then
-					local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
+					local income = EconomyService.income(player, data)
 					if income > 0 then
 						data.Cash += income * dt
 					end

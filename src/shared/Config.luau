@@ -67,6 +67,53 @@ Config.Index = {
 	BonusPerGoober = 0.02, -- +2% income per discovered Goober (all 14 = +28%)
 }
 
+-- Robux items. Id = 0 means "not created on Roblox yet": the shop shows it as coming
+-- soon and it can't be bought. Create each one in the Creator Dashboard after the first
+-- publish, paste its id here, and it switches on. Prices are set on Roblox, not here.
+Config.Monetization = {
+	Passes = {
+		DoubleCash = {
+			Id = 0,
+			Name = "2x Cash",
+			Description = "Every Goober earns double, forever.",
+			Multiplier = 2,
+			SuggestedRobux = 199,
+		},
+		Lucky = {
+			Id = 0,
+			Name = "Lucky Launcher",
+			Description = "1.5x luck on every crate: rarer Goobers and mutations.",
+			Multiplier = 1.5,
+			SuggestedRobux = 249,
+		},
+		SuperCannon = {
+			Id = 0,
+			Name = "Super Cannon",
+			Description = "+15% launch speed. Reach new zones sooner.",
+			Multiplier = 1.15,
+			SuggestedRobux = 149,
+		},
+	},
+	Products = {
+		CashPack = {
+			Id = 0,
+			Name = "Cash Pack",
+			Description = "10 minutes of your income, instantly (at least $1K).",
+			IncomeSeconds = 600,
+			MinCash = 1000,
+			SuggestedRobux = 49,
+		},
+		LuckBoost = {
+			Id = 0,
+			Name = "Luck Boost",
+			Description = "2x luck for 15 minutes. Stacks with Lucky Launcher.",
+			Multiplier = 2,
+			Minutes = 15,
+			SuggestedRobux = 39,
+		},
+	},
+}
+
 Config.Plot = {
 	Slots = 8,
 	SellSeconds = 20, -- a Goober sells for this many seconds of its income

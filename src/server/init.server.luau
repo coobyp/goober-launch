@@ -11,11 +11,13 @@ local DataService = require(Services.DataService)
 local EconomyService = require(Services.EconomyService)
 local PlotService = require(Services.PlotService)
 local LaunchService = require(Services.LaunchService)
+local MonetizationService = require(Services.MonetizationService)
 local DevCommands = require(Services.DevCommands)
 
 local map = MapBuilder.build()
 PlotService.start(map)
 EconomyService.start()
 LaunchService.start()
+MonetizationService.start()
 DevCommands.start() -- Studio only
 DataService.start() -- last, so every onLoaded hook is registered before profiles load
