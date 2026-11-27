@@ -40,6 +40,7 @@ local PlotService = {}
 local plots: { Plot } = {}
 local plotByPlayer: { [Player]: Plot } = {}
 local cannonHandler: ((Player, Plot) -> ())? = nil
+local stealHandler: ((Player, Plot, number) -> ())? = nil
 
 local notify = Remotes.get("Notify")
 
@@ -229,17 +230,38 @@ local function renderSlot(plot: Plot, goober: { Id: string, Mutation: string, Sl
 
 	local body = model.PrimaryPart
 	if body then
+		local ownerId = if plot.Owner then plot.Owner.UserId else 0
+		local slot = goober.Slot
+
+		-- Two prompts on one Goober: the owner sees Sell, everyone else sees Steal.
+		-- PromptFilter (client) hides the one that isn't yours; the server checks anyway.
 		local prompt = Instance.new("ProximityPrompt")
+		prompt.Name = "SellPrompt"
 		prompt.ActionText = "Sell " .. Format.cash(Formulas.sellValue(goober.Id, goober.Mutation))
 		prompt.ObjectText = model.Name
 		prompt.HoldDuration = 0.6
 		prompt.MaxActivationDistance = 10
 		prompt.RequiresLineOfSight = false
+		prompt:SetAttribute("OnlyUserId", ownerId)
 		prompt.Parent = body
-		local slot = goober.Slot
 		prompt.Triggered:Connect(function(who)
 			if who == plot.Owner then
 				sellSlot(who, slot)
+			end
+		end)
+
+		local steal = Instance.new("ProximityPrompt")
+		steal.Name = "StealPrompt"
+		steal.ActionText = "Steal"
+		steal.ObjectText = model.Name
+		steal.HoldDuration = Config.Steal.HoldSeconds
+		steal.MaxActivationDistance = 10
+		steal.RequiresLineOfSight = false
+		steal:SetAttribute("NotUserId", ownerId)
+		steal.Parent = body
+		steal.Triggered:Connect(function(who)
+			if who ~= plot.Owner and stealHandler then
+				stealHandler(who, plot, slot)
 			end
 		end)
 	end
@@ -265,6 +287,72 @@ end
 
 function PlotService.setCannonHandler(handler: (Player, Plot) -> ())
 	cannonHandler = handler
+end
+
+function PlotService.setStealHandler(handler: (Player, Plot, number) -> ())
+	stealHandler = handler
+end
+
+-- The Goober entry in `slot` on this plot, if any.
+function PlotService.gooberAt(plot: Plot, slot: number): DataService.OwnedGoober?
+	local owner = plot.Owner
+	local data = owner and DataService.get(owner)
+	if not data then
+		return nil
+	end
+	for _, g in data.Goobers do
+		if g.Slot == slot then
+			return g
+		end
+	end
+	return nil
+end
+
+-- Hide a Goober while someone carries it off (it's still owned until they make it home).
+function PlotService.hideSlot(plot: Plot, slot: number)
+	local model = plot.Rendered[slot]
+	if model then
+		model:Destroy()
+		plot.Rendered[slot] = nil
+	end
+end
+
+-- Put a hidden Goober back on its pedestal.
+function PlotService.showSlot(plot: Plot, slot: number)
+	local g = PlotService.gooberAt(plot, slot)
+	if g then
+		renderSlot(plot, g)
+	end
+end
+
+-- Take a Goober off its owner for good (a successful steal). Returns the entry.
+function PlotService.removeGoober(plot: Plot, slot: number, id: string): DataService.OwnedGoober?
+	local owner = plot.Owner
+	local data = owner and DataService.get(owner)
+	if not owner or not data then
+		return nil
+	end
+	for i, g in data.Goobers do
+		if g.Slot == slot and g.Id == id then
+			table.remove(data.Goobers, i)
+			PlotService.hideSlot(plot, slot)
+			EconomyService.refresh(owner)
+			return g
+		end
+	end
+	return nil
+end
+
+-- True if a world position is on this plot's floor (with a little margin).
+function PlotService.contains(plot: Plot, position: Vector3): boolean
+	local localPos = plot.Origin:PointToObjectSpace(position)
+	return math.abs(localPos.X) <= PLOT_SIZE.X / 2 + 2
+		and math.abs(localPos.Z) <= PLOT_SIZE.Z / 2 + 2
+		and localPos.Y < 30
+end
+
+function PlotService.all(): { Plot }
+	return plots
 end
 
 export type GrantOutcome = {

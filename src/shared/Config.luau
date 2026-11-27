@@ -114,6 +114,18 @@ Config.Monetization = {
 	},
 }
 
+-- Stealing: hold Steal on someone else's Goober, then carry it back to your own plot.
+-- The owner gets it back by tagging you (getting close), or when time runs out.
+Config.Steal = {
+	HoldSeconds = 1.5, -- how long to hold the Steal prompt
+	CarrySpeed = 11, -- walk speed while carrying (normal is 16)
+	TagDistance = 7, -- owner this close to the thief = Goober goes home
+	TimeoutSeconds = 45, -- carry it home within this or it goes back
+	CooldownSeconds = 15, -- per thief, between steal attempts
+	LockSeconds = 60, -- how long Lock Base protects your plot
+	LockCooldownSeconds = 180, -- time between locks, counted from when the lock started
+}
+
 Config.Plot = {
 	Slots = 8,
 	SellSeconds = 20, -- a Goober sells for this many seconds of its income

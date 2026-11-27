@@ -2,7 +2,7 @@
 
 Cannon your own ragdoll across the map. Whatever crate you land on cracks open into a Goober, an original meme critter that earns cash on your plot. Spend cash on Launch Power, fly farther, land in rarer zones, catch rarer Goobers.
 
-The core loop is playable end to end, with all six zones, rebirth, the Goober Index and a Robux shop (switched on after publishing). Stealing is next.
+The core loop is playable end to end, with all six zones, rebirth, the Goober Index, stealing and a Robux shop (switched on after publishing).
 
 ## Play it in Studio (on 9100)
 
@@ -48,6 +48,7 @@ Nothing sold is random, so no odds disclosure is needed for paid items. Receipts
 5. Plot full? A new catch auto-replaces your weakest Goober and sells it. Hold **Sell** on any Goober to sell it yourself.
 6. At Launch Power 15 with $50K, **Rebirth** (above the upgrade button, tap twice). It resets your cash and Launch Power, keeps your Goobers and best distance, and gives a permanent +50% income per rebirth. Each rebirth costs 4x the last (`Config.Rebirth`).
 7. Open the **Index** (left side) to see every Goober. Each one you've ever caught gives +2% income for good, even after you sell it (`Config.Index`).
+8. **Steal**: hold Steal on someone else's Goober, then walk it back to your own plot (you're slower while carrying). If the owner gets close to you, it goes back. It also goes back if you take longer than 45 seconds or die. **Lock Base** (left side) stops new steals on your plot for 60 seconds, every 3 minutes (`Config.Steal`).
 
 ## What's in the box
 
@@ -63,6 +64,7 @@ src/
       EconomyService        cash/sec, offline earnings, Launch Power purchases
       DataService           ProfileStore saves
       MonetizationService   game passes, developer products, receipts
+      StealService          steal, carry, tag back, Lock Base
       DevCommands           Studio-only test hooks
   client/
     init.client.luau
@@ -72,6 +74,7 @@ src/
       RainbowController     color cycling for Rainbow Goobers
       IndexController       the Goober Index panel
       ShopController        the Robux shop
+      StealController       Sell/Steal prompt filtering, Lock Base button
   shared/
     Config                  every tunable number
     GooberDefs              the 14 Goobers

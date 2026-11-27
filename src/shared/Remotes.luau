@@ -14,6 +14,7 @@ local NAMES = {
 	"ChargeCancelled", -- server -> client: charge timed out or was refused.
 	"BuyLaunchPower", -- client -> server: buy one Launch Power level.
 	"Rebirth", -- client -> server: rebirth now (server checks it's allowed).
+	"LockBase", -- client -> server: lock your plot against stealing for a while.
 	"PromptPurchase", -- client -> server: show the Robux prompt. ("Pass" | "Product", configKey)
 	"Notify", -- server -> client: toast message. (text, color?)
 }

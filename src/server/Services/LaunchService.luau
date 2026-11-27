@@ -21,6 +21,7 @@ local EconomyService = require(script.Parent.EconomyService)
 local MonetizationService = require(script.Parent.MonetizationService)
 local PlotService = require(script.Parent.PlotService)
 local Ragdoll = require(script.Parent.Ragdoll)
+local StealService = require(script.Parent.StealService)
 
 type Phase = "Idle" | "Charging" | "Flying"
 type State = { Phase: Phase, Token: number }
@@ -92,6 +93,10 @@ end
 local function onCannon(player: Player, plot: PlotService.Plot)
 	if plot.Owner ~= player then
 		remotes.Notify:FireClient(player, "That's someone else's cannon. Yours is on your plot!")
+		return
+	end
+	if StealService.isCarrying(player) then
+		remotes.Notify:FireClient(player, "Get that Goober home first!")
 		return
 	end
 	local state = getState(player)
