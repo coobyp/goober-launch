@@ -154,6 +154,29 @@ local defs: { GooberDef } = {
 		Accessory = "Crown",
 		Blurb = "Cannot be stressed. Has tried.",
 	},
+	-- Mythic: only drops from Downtown and beyond.
+	{
+		Id = "lord_flumpington",
+		Name = "Lord Flumpington III",
+		Rarity = "Mythic",
+		Income = 1500,
+		Color = Color3.fromRGB(180, 40, 70),
+		Squish = Vector3.new(4, 3, 4),
+		EyeScale = 0.8,
+		Accessory = "Crown",
+		Blurb = "The first two were also him.",
+	},
+	{
+		Id = "the_chosen_bean",
+		Name = "The Chosen Bean",
+		Rarity = "Mythic",
+		Income = 2200,
+		Color = Color3.fromRGB(255, 215, 90),
+		Squish = Vector3.new(2, 2.6, 2),
+		EyeScale = 1.4,
+		Accessory = "Halo",
+		Blurb = "Prophesied. Still just a bean.",
+	},
 }
 
 local GooberDefs = {}

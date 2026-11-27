@@ -117,6 +117,11 @@ local function beginCharge(muzzle: CFrame)
 end
 
 local function onLaunched(origin: Vector3, _speed: number, sweetSpot: boolean)
+	-- The server decides when you fly; make sure the meter is gone even if it fired
+	-- the launch itself (Studio DevCommands) rather than on our release.
+	if charging then
+		stopCharging()
+	end
 	flying = true
 	flightOrigin = origin
 	restoreCamera()

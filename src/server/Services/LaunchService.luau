@@ -333,6 +333,18 @@ local function onLaunch(player: Player, charge: unknown)
 	task.spawn(watchFlight, player, token, plot, speed, sweetSpot)
 end
 
+-- Studio test hook (see DevCommands): climb into your own cannon and fire at `charge`,
+-- running the exact same server path as a real player.
+function LaunchService.devLaunch(player: Player, charge: number)
+	local plot = PlotService.getPlot(player)
+	if not plot then
+		return
+	end
+	onCannon(player, plot)
+	task.wait(0.2)
+	onLaunch(player, charge)
+end
+
 function LaunchService.start()
 	PlotService.setCannonHandler(onCannon)
 	remotes.Launch.OnServerEvent:Connect(onLaunch)

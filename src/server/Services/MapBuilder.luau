@@ -86,7 +86,7 @@ function MapBuilder.build(): Folder
 			zone.GroundColor,
 			map
 		)
-		ground.Material = if i == 3 then Enum.Material.Sand else Enum.Material.Grass
+		ground.Material = zone.GroundMaterial
 		ground:SetAttribute("ZoneIndex", i)
 		-- Signs on the left and right edges of each zone's start line.
 		for _, x in { -width / 2 + 30, width / 2 - 30 } do

@@ -32,6 +32,7 @@ local function loadShared(name: string)
 		end,
 		Color3 = roblox.Color3,
 		Vector3 = roblox.Vector3,
+		Enum = roblox.Enum,
 	}, { __index = _G })
 	local chunk = luau.load(source, { debugName = name, environment = env })
 	local result = chunk()
@@ -76,8 +77,8 @@ end
 
 print("Goober math")
 
-test("roster has 12 Goobers across all 5 rarities", function()
-	eq(#GooberDefs.List, 12, "count")
+test("roster has 14 Goobers across all 6 rarities", function()
+	eq(#GooberDefs.List, 14, "count")
 	for _, rarity in Config.RarityOrder do
 		assert(GooberDefs.ByRarity[rarity] and #GooberDefs.ByRarity[rarity] > 0, "no Goobers for " .. rarity)
 	end
@@ -90,8 +91,9 @@ test("every Goober has positive income and a known rarity", function()
 	end
 end)
 
-test("3 zones, ordered by distance", function()
-	eq(#Config.Zones, 3, "zone count")
+test("6 zones, ordered by distance and inside the field", function()
+	eq(#Config.Zones, 6, "zone count")
+	assert(Config.Zones[#Config.Zones].StartDistance < Config.FieldLength, "last zone starts past the wall")
 	for i = 2, #Config.Zones do
 		assert(Config.Zones[i].StartDistance > Config.Zones[i - 1].StartDistance, "zones out of order")
 	end
@@ -103,7 +105,11 @@ test("zoneForDistance picks the right zone", function()
 	eq(Rolls.zoneForDistance(180), 2)
 	eq(Rolls.zoneForDistance(449), 2)
 	eq(Rolls.zoneForDistance(450), 3)
-	eq(Rolls.zoneForDistance(99999), 3)
+	eq(Rolls.zoneForDistance(749), 3)
+	eq(Rolls.zoneForDistance(750), 4)
+	eq(Rolls.zoneForDistance(1050), 5)
+	eq(Rolls.zoneForDistance(1400), 6)
+	eq(Rolls.zoneForDistance(99999), 6)
 end)
 
 test("pickWeighted respects boundaries and skips zero weights", function()
@@ -147,6 +153,13 @@ test("Backyard can never drop Epic or Legendary", function()
 			return i / 1000
 		end)
 		assert(r ~= "Epic" and r ~= "Legendary", "got " .. r)
+	end
+end)
+
+test("Mythic only drops from Downtown and beyond", function()
+	for zone = 1, #Config.Zones do
+		local canDrop = (Config.Zones[zone].RarityWeights.Mythic or 0) > 0
+		eq(canDrop, Config.Zones[zone].StartDistance >= 750, Config.Zones[zone].Name)
 	end
 end)
 

@@ -5,6 +5,7 @@ export type Zone = {
 	Name: string,
 	StartDistance: number, -- studs from the muzzle where this zone begins
 	GroundColor: Color3,
+	GroundMaterial: Enum.Material,
 	-- Rarity weights for crates that land in this zone. They don't need to sum to 100.
 	RarityWeights: { [string]: number },
 }
@@ -59,7 +60,7 @@ Config.Plot = {
 	MaxPlots = 6,
 }
 
-Config.RarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Legendary" }
+Config.RarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic" }
 
 Config.RarityColors = {
 	Common = Color3.fromRGB(200, 200, 200),
@@ -67,6 +68,7 @@ Config.RarityColors = {
 	Rare = Color3.fromRGB(70, 150, 255),
 	Epic = Color3.fromRGB(190, 90, 255),
 	Legendary = Color3.fromRGB(255, 190, 40),
+	Mythic = Color3.fromRGB(255, 70, 110),
 }
 
 -- Ordered by distance. A landing belongs to the last zone whose StartDistance it passed.
@@ -75,19 +77,43 @@ Config.Zones = {
 		Name = "Backyard",
 		StartDistance = 0,
 		GroundColor = Color3.fromRGB(96, 168, 76),
-		RarityWeights = { Common = 80, Uncommon = 18, Rare = 2, Epic = 0, Legendary = 0 },
+		GroundMaterial = Enum.Material.Grass,
+		RarityWeights = { Common = 80, Uncommon = 18, Rare = 2, Epic = 0, Legendary = 0, Mythic = 0 },
 	},
 	{
 		Name = "Suburbs",
 		StartDistance = 180,
 		GroundColor = Color3.fromRGB(140, 150, 120),
-		RarityWeights = { Common = 50, Uncommon = 32, Rare = 13, Epic = 4.5, Legendary = 0.5 },
+		GroundMaterial = Enum.Material.Grass,
+		RarityWeights = { Common = 50, Uncommon = 32, Rare = 13, Epic = 4.5, Legendary = 0.5, Mythic = 0 },
 	},
 	{
 		Name = "Mall",
 		StartDistance = 450,
 		GroundColor = Color3.fromRGB(205, 180, 130),
-		RarityWeights = { Common = 28, Uncommon = 35, Rare = 23, Epic = 11, Legendary = 3 },
+		GroundMaterial = Enum.Material.Sand,
+		RarityWeights = { Common = 28, Uncommon = 35, Rare = 23, Epic = 11, Legendary = 3, Mythic = 0 },
+	},
+	{
+		Name = "Downtown",
+		StartDistance = 750,
+		GroundColor = Color3.fromRGB(110, 110, 120),
+		GroundMaterial = Enum.Material.Asphalt,
+		RarityWeights = { Common = 12, Uncommon = 30, Rare = 31, Epic = 19, Legendary = 7, Mythic = 1 },
+	},
+	{
+		Name = "Volcano",
+		StartDistance = 1050,
+		GroundColor = Color3.fromRGB(120, 50, 40),
+		GroundMaterial = Enum.Material.Basalt,
+		RarityWeights = { Common = 4, Uncommon = 18, Rare = 32, Epic = 28, Legendary = 14, Mythic = 4 },
+	},
+	{
+		Name = "Outer Rim",
+		StartDistance = 1400,
+		GroundColor = Color3.fromRGB(90, 70, 140),
+		GroundMaterial = Enum.Material.Slate,
+		RarityWeights = { Common = 0, Uncommon = 8, Rare = 28, Epic = 34, Legendary = 21, Mythic = 9 },
 	},
 } :: { Zone }
 
@@ -99,7 +125,7 @@ Config.Mutations = {
 	{ Name = "Gold", Chance = 0.05, Multiplier = 2 },
 } :: { Mutation }
 
-Config.FieldLength = 1600
+Config.FieldLength = 1800
 Config.FieldWidth = 600
 
 return Config

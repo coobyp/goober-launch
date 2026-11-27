@@ -2,7 +2,7 @@
 
 Cannon your own ragdoll across the map. Whatever crate you land on cracks open into a Goober, an original meme critter that earns cash on your plot. Spend cash on Launch Power, fly farther, land in rarer zones, catch rarer Goobers.
 
-This is the **week one build**: the core loop, playable end to end. Stealing, rebirth, index, game passes and zones 4 to 6 are week two.
+The core loop is playable end to end, with all six zones. Rebirth, the Goober index, game passes and stealing are in progress (week two).
 
 ## Play it in Studio (on 9100)
 
@@ -56,7 +56,7 @@ src/
       RainbowController     color cycling for Rainbow Goobers
   shared/
     Config                  every tunable number
-    GooberDefs              the 12 Goobers
+    GooberDefs              the 14 Goobers
     Rolls                   zone, rarity and mutation rolls (pure)
     Formulas                launch speed, costs, income, offline math (pure)
     GooberVisual            builds a Goober model from primitives
@@ -70,8 +70,8 @@ The client sends exactly two things: a 0..1 charge value (clamped) and "buy the 
 
 ### Content
 
-- **3 zones**: Backyard (0+), Suburbs (180+), Mall (450+). Each has its own rarity table (`Config.Zones`).
-- **12 Goobers across 5 rarities**: Common, Uncommon, Rare, Epic, Legendary (`GooberDefs`). Original characters, no borrowed IP.
+- **6 zones**: Backyard (0+), Suburbs (180+), Mall (450+), Downtown (750+), Volcano (1050+), Outer Rim (1400+). Each has its own rarity table (`Config.Zones`). A perfect launch reaches Downtown around Launch Power 20 and the Outer Rim around 28.
+- **14 Goobers across 6 rarities**: Common, Uncommon, Rare, Epic, Legendary, Mythic (`GooberDefs`). Mythics only drop from Downtown and beyond. Original characters, no borrowed IP.
 - **4 mutations**: Gold x2, Huge x3, Rainbow x5, Crispy x10 (`Config.Mutations`).
 
 ## Tuning the feel
@@ -98,3 +98,17 @@ rojo build -o goober-launch.rbxl
 ```
 
 CI runs all four on every PR.
+
+### Studio test hooks
+
+In Studio only, `ServerStorage.DevCommands` lets you skip the grind. Run these from the command bar on the server (or over Studio MCP with `execute_luau`):
+
+```lua
+local dc = game.ServerStorage.DevCommands
+dc:Invoke("cash", 1e6)     -- add cash
+dc:Invoke("level", 20)     -- set Launch Power
+dc:Invoke("launch", 0.92)  -- fire your cannon; 0.92 is a perfect charge
+dc:Invoke("state")         -- cash, level, best distance and Goobers
+```
+
+They act on the first player and don't exist in live servers.
