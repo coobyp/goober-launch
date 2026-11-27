@@ -54,11 +54,13 @@ gui.IgnoreGuiInset = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Top-left stats panel.
+-- Stats panel, middle of the left edge (the top-left corner belongs to Roblox chat,
+-- which would sit on top of it and eat clicks).
 local stats = Instance.new("Frame")
 stats.Name = "Stats"
 stats.Size = UDim2.fromOffset(230, 96)
-stats.Position = UDim2.fromOffset(12, 12)
+stats.AnchorPoint = Vector2.new(0, 1)
+stats.Position = UDim2.new(0, 12, 0.5, 8)
 stats.BackgroundColor3 = Color3.fromRGB(60, 40, 90)
 stats.BackgroundTransparency = 0.15
 stats.Parent = gui
@@ -259,6 +261,7 @@ export type LaunchResult = {
 	Mutation: string,
 	Income: number,
 	NewBest: boolean,
+	NewDiscovery: boolean?,
 	SweetSpot: boolean,
 	Placed: boolean,
 	SoldName: string?,
@@ -282,6 +285,9 @@ function HUD.showResult(result: LaunchResult)
 		cardNote.Text = "Plot full: sold it for " .. Format.cash(result.SoldValue or 0)
 	else
 		cardNote.Text = "Added to your plot!"
+	end
+	if result.NewDiscovery then
+		cardNote.Text = "NEW in your Index!  " .. cardNote.Text
 	end
 	card.Visible = true
 	card.Size = UDim2.fromOffset(220, 100)

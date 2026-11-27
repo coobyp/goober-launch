@@ -191,6 +191,7 @@ local function finishFlight(
 		data.BestDistance = distance
 	end
 
+	local newDiscovery = not data.Discovered[result.Id]
 	crateReveal(root.Position, result.Id, result.Mutation, { character })
 	local outcome = PlotService.grantGoober(player, result.Id, result.Mutation)
 	EconomyService.refresh(player)
@@ -206,6 +207,7 @@ local function finishFlight(
 		Mutation = result.Mutation,
 		Income = Formulas.gooberIncome(result.Id, result.Mutation),
 		NewBest = newBest,
+		NewDiscovery = newDiscovery,
 		SweetSpot = sweetSpot,
 		Placed = outcome.Placed,
 		SoldName = if outcome.SoldId and GooberDefs.ById[outcome.SoldId]

@@ -40,7 +40,7 @@ function EconomyService.refresh(player: Player)
 	if not data then
 		return
 	end
-	local income = Formulas.totalIncome(data.Goobers, data.Rebirths)
+	local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
 	player:SetAttribute("Cash", data.Cash)
 	player:SetAttribute("Income", income)
 	player:SetAttribute("LaunchLevel", data.LaunchLevel)
@@ -48,6 +48,14 @@ function EconomyService.refresh(player: Player)
 	player:SetAttribute("BestDistance", data.BestDistance)
 	player:SetAttribute("LaunchSpeed", Formulas.baseLaunchSpeed(data.LaunchLevel))
 	player:SetAttribute("Rebirths", data.Rebirths)
+	local found = {}
+	for id, isFound in data.Discovered do
+		if isFound then
+			table.insert(found, id)
+		end
+	end
+	table.sort(found)
+	player:SetAttribute("Discovered", table.concat(found, ","))
 	player:SetAttribute("RebirthCost", Formulas.rebirthCost(data.Rebirths))
 	leaderstat(player, "Cash").Value = math.floor(math.min(data.Cash, 2 ^ 53))
 	leaderstat(player, "Best").Value = math.floor(data.BestDistance)
@@ -143,7 +151,7 @@ end
 local function onLoaded(player: Player, data: DataService.PlayerData)
 	local now = os.time()
 	if data.LastOnline > 0 then
-		local income = Formulas.totalIncome(data.Goobers, data.Rebirths)
+		local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
 		local earned, credited = Formulas.offlineEarnings(income, now - data.LastOnline)
 		if earned > 0 then
 			data.Cash += earned
@@ -189,7 +197,7 @@ function EconomyService.start()
 			for _, player in Players:GetPlayers() do
 				local data = DataService.get(player)
 				if data then
-					local income = Formulas.totalIncome(data.Goobers, data.Rebirths)
+					local income = Formulas.totalIncome(data.Goobers, data.Rebirths, data.Discovered)
 					if income > 0 then
 						data.Cash += income * dt
 					end

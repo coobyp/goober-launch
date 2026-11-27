@@ -62,6 +62,11 @@ Config.Rebirth = {
 	Max = 50,
 }
 
+-- Goober Index: every Goober you've ever caught counts, even after you sell it.
+Config.Index = {
+	BonusPerGoober = 0.02, -- +2% income per discovered Goober (all 14 = +28%)
+}
+
 Config.Plot = {
 	Slots = 8,
 	SellSeconds = 20, -- a Goober sells for this many seconds of its income

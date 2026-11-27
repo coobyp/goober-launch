@@ -295,6 +295,15 @@ test("rebirth: cost grows, multiplier stacks, gated by level and cash", function
 	eq(Formulas.totalIncome(plot), 1, "no rebirths by default")
 end)
 
+test("index bonus counts only real Goobers and stacks with rebirth", function()
+	eq(Formulas.discoveredCount(nil), 0)
+	eq(Formulas.discoveredCount({ sir_blobbington = true, not_a_goober = true, mega_jeff = false }), 1)
+	local plot = { { Id = "sir_blobbington", Mutation = "None", Slot = 1 } }
+	local found = { sir_blobbington = true, toastgoblin = true }
+	local expected = 1 * Formulas.rebirthMultiplier(1) * (1 + 2 * Config.Index.BonusPerGoober)
+	assert(math.abs(Formulas.totalIncome(plot, 1, found) - expected) < 1e-9, "stacked multiplier")
+end)
+
 test("offline earnings cap at 2 hours", function()
 	local earned, credited = Formulas.offlineEarnings(10, 60)
 	eq(earned, 600)

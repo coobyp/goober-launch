@@ -2,7 +2,7 @@
 
 Cannon your own ragdoll across the map. Whatever crate you land on cracks open into a Goober, an original meme critter that earns cash on your plot. Spend cash on Launch Power, fly farther, land in rarer zones, catch rarer Goobers.
 
-The core loop is playable end to end, with all six zones and rebirth. The Goober index, game passes and stealing are in progress (week two).
+The core loop is playable end to end, with all six zones, rebirth and the Goober Index. Game passes and stealing are in progress (week two).
 
 ## Play it in Studio (on 9100)
 
@@ -35,6 +35,7 @@ The map, plots, cannons and Goobers are all built from code, so there's nothing 
 4. Buy **Launch Power** (bottom right) to reach the Suburbs (180+ studs) and the Mall (450+ studs), where rarer Goobers drop.
 5. Plot full? A new catch auto-replaces your weakest Goober and sells it. Hold **Sell** on any Goober to sell it yourself.
 6. At Launch Power 15 with $50K, **Rebirth** (above the upgrade button, tap twice). It resets your cash and Launch Power, keeps your Goobers and best distance, and gives a permanent +50% income per rebirth. Each rebirth costs 4x the last (`Config.Rebirth`).
+7. Open the **Index** (left side) to see every Goober. Each one you've ever caught gives +2% income for good, even after you sell it (`Config.Index`).
 
 ## What's in the box
 
@@ -55,6 +56,7 @@ src/
       HUD                   cash, income, upgrade button, meter, result card, toasts
       CannonController      hold-to-charge input, cannon camera, live distance
       RainbowController     color cycling for Rainbow Goobers
+      IndexController       the Goober Index panel
   shared/
     Config                  every tunable number
     GooberDefs              the 14 Goobers

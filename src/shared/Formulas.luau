@@ -95,13 +95,34 @@ function Formulas.canRebirth(rebirths: number, launchLevel: number, cash: number
 	return cost ~= nil and launchLevel >= Config.Rebirth.LevelRequired and cash >= cost
 end
 
--- Cash per second for a whole plot, including the rebirth multiplier.
-function Formulas.totalIncome(goobers: { OwnedGoober }, rebirths: number?): number
+-- Income multiplier from the Index. Only counts ids that are real Goobers.
+function Formulas.indexMultiplier(discovered: { [string]: boolean }?): number
+	return 1 + Config.Index.BonusPerGoober * Formulas.discoveredCount(discovered)
+end
+
+function Formulas.discoveredCount(discovered: { [string]: boolean }?): number
+	local count = 0
+	if discovered then
+		for id, found in discovered do
+			if found and GooberDefs.ById[id] then
+				count += 1
+			end
+		end
+	end
+	return count
+end
+
+-- Cash per second for a whole plot, including rebirth and Index multipliers.
+function Formulas.totalIncome(
+	goobers: { OwnedGoober },
+	rebirths: number?,
+	discovered: { [string]: boolean }?
+): number
 	local total = 0
 	for _, g in goobers do
 		total += Formulas.gooberIncome(g.Id, g.Mutation)
 	end
-	return total * Formulas.rebirthMultiplier(rebirths or 0)
+	return total * Formulas.rebirthMultiplier(rebirths or 0) * Formulas.indexMultiplier(discovered)
 end
 
 function Formulas.offlineEarnings(incomePerSecond: number, secondsAway: number): (number, number)
