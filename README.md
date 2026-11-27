@@ -86,7 +86,7 @@ Feel is the whole game, so tune before building more. Everything is in `src/shar
 | Rarer drops | `Zones[i].RarityWeights`, `Mutations[i].Chance` |
 | More or less flailing | `Cannon.SpinStrength`, joint limits in `Ragdoll.luau` |
 
-Rough range at a full charge is `speed^2 x sin(2 x pitch) / 196.2` studs before bounces: level 0 is about 60 studs, level 6 reaches the Suburbs, about level 14 reaches the Mall.
+Rough range at a full charge is `speed^2 x sin(2 x pitch) / 196.2` studs, plus the launch height and a short tumble after landing (`Flight.GroundSpeedKeptPerStep`). Measured in Studio, a perfect launch goes about 82 studs at level 0 and about 250 at level 6.
 
 ## Dev commands
 

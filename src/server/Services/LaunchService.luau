@@ -233,18 +233,41 @@ local function watchFlight(
 	local state = getState(player)
 	local started = os.clock()
 	local restingFor = 0
+	local grounded = false
 	local step = 0.1
+	local groundParams = RaycastParams.new()
+	groundParams.FilterType = Enum.RaycastFilterType.Exclude
 	while state.Token == token do
 		task.wait(step)
 		if player.Parent == nil then
 			return
 		end
-		local _, _, root = getRig(player)
-		if not root then
+		local character, _, root = getRig(player)
+		if not character or not root then
 			resetToIdle(player)
 			return
 		end
 		local elapsed = os.clock() - started
+		-- Once the ragdoll hits the ground, bleed off its horizontal speed so it tumbles
+		-- to a stop instead of skating. Without this, ground sliding adds ~70% to the
+		-- distance and makes Launch Power matter less than it should.
+		if not grounded and elapsed > Config.Flight.MinFlightSeconds then
+			groundParams.FilterDescendantsInstances = { character }
+			grounded = Workspace:Raycast(
+				root.Position,
+				Vector3.new(0, -Config.Flight.GroundCheckStuds, 0),
+				groundParams
+			) ~= nil
+		end
+		if grounded then
+			local keep = Config.Flight.GroundSpeedKeptPerStep
+			for _, part in character:GetDescendants() do
+				if part:IsA("BasePart") then
+					local v = part.AssemblyLinearVelocity
+					part.AssemblyLinearVelocity = Vector3.new(v.X * keep, v.Y, v.Z * keep)
+				end
+			end
+		end
 		if elapsed > Config.Flight.MinFlightSeconds then
 			if root.AssemblyLinearVelocity.Magnitude < Config.Flight.RestSpeed then
 				restingFor += step

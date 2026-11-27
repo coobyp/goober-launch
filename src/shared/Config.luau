@@ -37,6 +37,8 @@ Config.Flight = {
 	RestSeconds = 0.5, -- how long it has to rest to count as landed
 	MaxFlightSeconds = 15,
 	ResultHoldSeconds = 2.5, -- time spent lying on the ground before teleporting home
+	GroundCheckStuds = 4, -- ground within this far below the root counts as landed
+	GroundSpeedKeptPerStep = 0.85, -- after landing, horizontal speed kept every 0.1s (lower = stops sooner)
 	-- Server owns the physics, but cap the reported distance anyway:
 	-- range can't exceed the vacuum ballistic range times this, plus bounce slack.
 	RangeSlackMultiplier = 1.6,
